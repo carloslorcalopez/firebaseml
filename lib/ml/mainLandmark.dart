@@ -50,15 +50,13 @@ class _LandmarkPageState extends State<LandmarkPage> {
   }
 
   Future<void> _getLandmarkInfo() async {
-    String landmark;
     try {
-      final int result =
+      final List<dynamic> result =
           await platform.invokeMethod('landmark', _imageFile.path);
-      landmark = 'Battery level at $result % .';
-    } on PlatformException catch (e) {
-      landmark = "Failed to get battery level: '${e.message}'.";
-    }
-    debugPrint(landmark);
+      result.forEach((element) {
+        debugPrint(element.toString());
+      });
+    } on PlatformException catch (e) {}
   }
 
   _loadImage(File file) async {

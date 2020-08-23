@@ -51,7 +51,6 @@ class MainActivity: FlutterActivity() {
             // Note: this method is invoked on the main thread.
             call, result ->
             if (call.method == "landmark") {
-                val batteryLevel = getBatteryLevel()
                 Log.v("TAG", call.arguments.toString())
                 var file = File(call.arguments.toString())
 
@@ -66,7 +65,7 @@ class MainActivity: FlutterActivity() {
                                 // Task completed successfully
                                 // [START_EXCLUDE]
                                 // [START get_landmarks_cloud]
-                                
+                                var resultAux:List<String> = mutableListOf<String>()
                                 for (landmark in firebaseVisionCloudLandmarks) {
 
                                     val bounds = landmark.boundingBox
@@ -76,24 +75,24 @@ class MainActivity: FlutterActivity() {
                                     Log.v("TAG", "landmark: $landmarkName")
                                     // Multiple locations are possible, e.g., the location of the depicted
                                     // landmark and the location the picture was taken.
+                                    var latitude:Double = 0.0
+                                    var longitude:Double = 0.0
                                     for (loc in landmark.locations) {
-                                        val latitude = loc.latitude
-                                        val longitude = loc.longitude
+                                        latitude = loc.latitude
+                                        longitude = loc.longitude
                                         Log.v("TAG", "location: $latitude,$longitude")
                                     }
+                                    resultAux += "{\"landmark\":\"$landmarkName\",\"latitude\":\"$latitude\",\"longitude\":\"$longitude\"}"
                                 }
                                 // [END get_landmarks_cloud]
                                 // [END_EXCLUDE]
+                                result.success(resultAux)
                             }
                             .addOnFailureListener { e ->
                                 // Task failed with an exception
                                 // ...
+                                result.error("UNAVAILABLE", "Battery level not available.", null)
                             }
-                }
-                if (batteryLevel != -1) {
-                    result.success(batteryLevel)
-                } else {
-                    result.error("UNAVAILABLE", "Battery level not available.", null)
                 }
             } else {
                 result.notImplemented()

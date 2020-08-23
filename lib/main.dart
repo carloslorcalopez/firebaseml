@@ -1,4 +1,13 @@
+import 'package:firebaseml/bloc/chuckPageBloc.dart';
+import 'package:firebaseml/mobx/chuckPageMobx.dart';
+import 'package:firebaseml/mobx/counterPage.dart';
+import 'package:firebaseml/redux/chuckPageRedux.dart';
+import 'package:firebaseml/redux/counterPageRedux.dart';
+import 'package:firebaseml/redux/counterRedux.dart';
 import 'package:flutter/material.dart';
+
+import 'chuckPage.dart';
+import 'ml/main.dart';
 
 void main() {
   runApp(MyApp());
@@ -26,7 +35,19 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(
+        title: 'Chuck APP',
+      ),
+      routes: <String, WidgetBuilder>{
+        '/jokes': (context) => ChuckPage(),
+        '/jokesBloc': (context) => ChuckPageBloc(),
+        '/counterMobx': (context) => CounterPageMobx(),
+        '/jokesMobx': (context) => ChuckPageMobx(),
+        '/counterRedux': (context) => CounterRedux(),
+        '/counterReduxLess': (context) => CounterPageRedux(),
+        '/jokesRedux': (context) => ChuckPageRedux(),
+        '/ml': (context) => FacePage()
+      },
     );
   }
 }
@@ -104,6 +125,47 @@ class _MyHomePageState extends State<MyHomePage> {
               '$_counter',
               style: Theme.of(context).textTheme.headline4,
             ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/jokes')},
+              elevation: 5,
+              child: Text('Jokes'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/jokesBloc')},
+              elevation: 5,
+              child: Text('Jokes BLOC'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/counterMobx')},
+              elevation: 5,
+              child: Text('Counter Mobx'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/jokesMobx')},
+              elevation: 5,
+              child: Text('Jokes Mobx'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/counterRedux')},
+              elevation: 5,
+              child: Text('Counter Redux'),
+            ),
+            RaisedButton(
+              onPressed: () =>
+                  {Navigator.pushNamed(context, '/counterReduxLess')},
+              elevation: 5,
+              child: Text('Counter Redux Stateless'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/jokesRedux')},
+              elevation: 5,
+              child: Text('Jokes Redux'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/ml')},
+              elevation: 5,
+              child: Text('ML'),
+            )
           ],
         ),
       ),

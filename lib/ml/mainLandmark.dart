@@ -19,6 +19,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
   //FirebaseApp.initializeApp(context);
   _getImageAndDetectFaces() async {
     final imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
+    /*
     setState(() {
       isLoading = true;
     });
@@ -43,6 +44,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
         _loadImage(imageFile);
       });
     }
+    */
   }
 
   _loadImage(File file) async {

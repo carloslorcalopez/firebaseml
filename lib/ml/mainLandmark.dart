@@ -7,6 +7,9 @@ import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../landmark.dart';
+import 'mapa.dart';
+
 class LandmarkPage extends StatefulWidget {
   @override
   _LandmarkPageState createState() => _LandmarkPageState();
@@ -16,6 +19,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
   File _imageFile;
   List<Face> _faces;
   List<ImageLabel> _labels;
+  List<Landmark> _landmarks = new List();
   bool isLoading = false;
   ui.Image _image;
   static const platform = const MethodChannel('samples.flutter.dev/landmark');
@@ -24,6 +28,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
     debugPrint("Path: " + imageFile.path);
     setState(() {
       isLoading = true;
+      _landmarks = new List();
     });
     final image = FirebaseVisionImage.fromFile(imageFile);
     final faceDetector = FirebaseVision.instance.faceDetector();
@@ -53,8 +58,13 @@ class _LandmarkPageState extends State<LandmarkPage> {
     try {
       final List<dynamic> result =
           await platform.invokeMethod('landmark', _imageFile.path);
+      List<Landmark> lista = new List<Landmark>();
       result.forEach((element) {
         debugPrint(element.toString());
+        lista.add(Landmark.fromJson(element.toString()));
+      });
+      setState(() {
+        _landmarks = lista;
       });
     } on PlatformException catch (e) {}
   }
@@ -72,21 +82,49 @@ class _LandmarkPageState extends State<LandmarkPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
-          ? Center(child: CircularProgressIndicator())
-          : (_imageFile == null)
-              ? Center(child: Text('No image selected'))
-              : Center(
-                  child: FittedBox(
-                    child: SizedBox(
-                      width: _image.width.toDouble(),
-                      height: _image.height.toDouble(),
-                      child: CustomPaint(
-                        painter: FacePainter(_image, _faces),
+      body: Column(children: [
+        Container(
+          height: 500,
+          child: isLoading
+              ? Center(child: CircularProgressIndicator())
+              : (_imageFile == null)
+                  ? Center(child: Text('No image selected'))
+                  : Center(
+                      child: FittedBox(
+                        child: SizedBox(
+                          width: _image.width.toDouble(),
+                          height: _image.height.toDouble(),
+                          child: CustomPaint(
+                            painter: FacePainter(_image, _faces),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
-                ),
+        ),
+        ListView.builder(
+            shrinkWrap: true,
+            padding: const EdgeInsets.all(5),
+            itemCount: _landmarks.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Container(
+                  alignment: Alignment.centerLeft,
+                  height: 30,
+                  child: FlatButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => MapaPage(
+                                    landmark: _landmarks[index],
+                                  )));
+                    },
+                    child: Text('${_landmarks[index].landmark}',
+                        style: TextStyle(
+                            color: Colors.blue,
+                            decoration: TextDecoration.underline)),
+                  ));
+            })
+      ]),
       floatingActionButton: FloatingActionButton(
         onPressed: _getImageAndDetectFaces,
         tooltip: 'Pick Image',

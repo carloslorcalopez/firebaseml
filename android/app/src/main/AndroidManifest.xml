@@ -11,6 +11,8 @@
         android:name="io.flutter.app.FlutterApplication"
         android:label="firebaseml"
         android:icon="@mipmap/ic_launcher">
+        <meta-data android:name="com.google.android.maps.v2.API_KEY"
+               android:value="AIzaSyDpsAugzxOAK-JYIe_kvPOmzTDSiDT-RPY"/>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"

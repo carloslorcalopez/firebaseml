@@ -1,24 +1,23 @@
 package org.cl.flutter.firebaseml
 
-import androidx.annotation.NonNull
-import io.flutter.embedding.android.FlutterActivity
-import io.flutter.embedding.engine.FlutterEngine
-import io.flutter.plugin.common.MethodChannel
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.content.IntentFilter
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
+import androidx.annotation.NonNull
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
-import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
-import org.cl.flutter.firebaseml.VisionImage
+import io.flutter.embedding.android.FlutterActivity
+import io.flutter.embedding.engine.FlutterEngine
+import io.flutter.plugin.common.MethodChannel
 import java.io.File
 
 //import devrel.firebase.google.com.firebaseoptions.BuildConfig
@@ -30,6 +29,7 @@ class MainActivity: FlutterActivity() {
             .setModelType(FirebaseVisionCloudDetectorOptions.LATEST_MODEL)
             .setMaxResults(15)
             .build()
+
     override fun configureFlutterEngine(@NonNull flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).setMethodCallHandler {
@@ -52,11 +52,44 @@ class MainActivity: FlutterActivity() {
             call, result ->
             if (call.method == "landmark") {
                 val batteryLevel = getBatteryLevel()
-                Log.v("TAG", call.arguments.toString());
+                Log.v("TAG", call.arguments.toString())
                 var file = File(call.arguments.toString())
 
                 var fileExists = file.exists()
-                Log.v("TAG", "existe:$fileExists");
+                Log.v("TAG", "existe archivo:$fileExists")
+                if (fileExists) {
+                    val detector = FirebaseVision.getInstance().getVisionCloudLandmarkDetector(options)
+                    val bitmap: Bitmap = BitmapFactory.decodeFile(file.path)
+                    val myImage = FirebaseVisionImage.fromBitmap(bitmap)
+                    val result = detector.detectInImage(myImage)
+                            .addOnSuccessListener { firebaseVisionCloudLandmarks ->
+                                // Task completed successfully
+                                // [START_EXCLUDE]
+                                // [START get_landmarks_cloud]
+                                
+                                for (landmark in firebaseVisionCloudLandmarks) {
+
+                                    val bounds = landmark.boundingBox
+                                    val landmarkName = landmark.landmark
+                                    val entityId = landmark.entityId
+                                    val confidence = landmark.confidence
+                                    Log.v("TAG", "landmark: $landmarkName")
+                                    // Multiple locations are possible, e.g., the location of the depicted
+                                    // landmark and the location the picture was taken.
+                                    for (loc in landmark.locations) {
+                                        val latitude = loc.latitude
+                                        val longitude = loc.longitude
+                                        Log.v("TAG", "location: $latitude,$longitude")
+                                    }
+                                }
+                                // [END get_landmarks_cloud]
+                                // [END_EXCLUDE]
+                            }
+                            .addOnFailureListener { e ->
+                                // Task failed with an exception
+                                // ...
+                            }
+                }
                 if (batteryLevel != -1) {
                     result.success(batteryLevel)
                 } else {

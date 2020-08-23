@@ -19,7 +19,6 @@ class _LandmarkPageState extends State<LandmarkPage> {
   bool isLoading = false;
   ui.Image _image;
   static const platform = const MethodChannel('samples.flutter.dev/landmark');
-  //FirebaseApp.initializeApp(context);
   _getImageAndDetectFaces() async {
     final imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
     debugPrint("Path: " + imageFile.path);
@@ -51,16 +50,15 @@ class _LandmarkPageState extends State<LandmarkPage> {
   }
 
   Future<void> _getLandmarkInfo() async {
-    String batteryLevel;
+    String landmark;
     try {
-      final Uint8List imagen = await _imageFile.readAsBytes();
-      final int result = await platform.invokeMethod('landmark', imagen);
-      platform.invokeMethod('landmark', _imageFile.path);
-      batteryLevel = 'Battery level at $result % .';
+      final int result =
+          await platform.invokeMethod('landmark', _imageFile.path);
+      landmark = 'Battery level at $result % .';
     } on PlatformException catch (e) {
-      batteryLevel = "Failed to get battery level: '${e.message}'.";
+      landmark = "Failed to get battery level: '${e.message}'.";
     }
-    debugPrint(batteryLevel);
+    debugPrint(landmark);
   }
 
   _loadImage(File file) async {

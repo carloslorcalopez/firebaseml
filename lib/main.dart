@@ -1,11 +1,12 @@
 import 'package:firebaseml/bloc/chuckPageBloc.dart';
+import 'package:firebaseml/ml/mainLandmark.dart';
 import 'package:firebaseml/mobx/chuckPageMobx.dart';
 import 'package:firebaseml/mobx/counterPage.dart';
 import 'package:firebaseml/redux/chuckPageRedux.dart';
 import 'package:firebaseml/redux/counterPageRedux.dart';
 import 'package:firebaseml/redux/counterRedux.dart';
 import 'package:flutter/material.dart';
-
+import 'page.dart';
 import 'chuckPage.dart';
 import 'ml/main.dart';
 
@@ -46,7 +47,9 @@ class MyApp extends StatelessWidget {
         '/counterRedux': (context) => CounterRedux(),
         '/counterReduxLess': (context) => CounterPageRedux(),
         '/jokesRedux': (context) => ChuckPageRedux(),
-        '/ml': (context) => FacePage()
+        '/ml': (context) => FacePage(),
+        '/battery': (context) => ChannelPage(),
+        '/landmark': (context) => LandmarkPage()
       },
     );
   }
@@ -165,6 +168,16 @@ class _MyHomePageState extends State<MyHomePage> {
               onPressed: () => {Navigator.pushNamed(context, '/ml')},
               elevation: 5,
               child: Text('ML'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/battery')},
+              elevation: 5,
+              child: Text('BATTERY'),
+            ),
+            RaisedButton(
+              onPressed: () => {Navigator.pushNamed(context, '/landmark')},
+              elevation: 5,
+              child: Text('LANDMARK'),
             )
           ],
         ),

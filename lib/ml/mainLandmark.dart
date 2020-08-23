@@ -1,8 +1,10 @@
 import 'dart:io';
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 
 class LandmarkPage extends StatefulWidget {
@@ -16,10 +18,11 @@ class _LandmarkPageState extends State<LandmarkPage> {
   List<ImageLabel> _labels;
   bool isLoading = false;
   ui.Image _image;
+  static const platform = const MethodChannel('samples.flutter.dev/landmark');
   //FirebaseApp.initializeApp(context);
   _getImageAndDetectFaces() async {
     final imageFile = await ImagePicker.pickImage(source: ImageSource.gallery);
-    /*
+    debugPrint("Path: " + imageFile.path);
     setState(() {
       isLoading = true;
     });
@@ -44,7 +47,20 @@ class _LandmarkPageState extends State<LandmarkPage> {
         _loadImage(imageFile);
       });
     }
-    */
+    _getLandmarkInfo();
+  }
+
+  Future<void> _getLandmarkInfo() async {
+    String batteryLevel;
+    try {
+      final Uint8List imagen = await _imageFile.readAsBytes();
+      final int result = await platform.invokeMethod('landmark', imagen);
+      platform.invokeMethod('landmark', _imageFile.path);
+      batteryLevel = 'Battery level at $result % .';
+    } on PlatformException catch (e) {
+      batteryLevel = "Failed to get battery level: '${e.message}'.";
+    }
+    debugPrint(batteryLevel);
   }
 
   _loadImage(File file) async {

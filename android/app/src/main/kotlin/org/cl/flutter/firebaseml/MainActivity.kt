@@ -11,12 +11,16 @@ import android.content.IntentFilter
 import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.cloud.FirebaseVisionCloudDetectorOptions
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
 import com.google.firebase.ml.vision.common.FirebaseVisionImageMetadata
 import com.google.firebase.ml.vision.label.FirebaseVisionCloudImageLabelerOptions
+import org.cl.flutter.firebaseml.VisionImage
+import java.io.File
+
 //import devrel.firebase.google.com.firebaseoptions.BuildConfig
 
 class MainActivity: FlutterActivity() {
@@ -47,9 +51,12 @@ class MainActivity: FlutterActivity() {
             // Note: this method is invoked on the main thread.
             call, result ->
             if (call.method == "landmark") {
-
                 val batteryLevel = getBatteryLevel()
+                Log.v("TAG", call.arguments.toString());
+                var file = File(call.arguments.toString())
 
+                var fileExists = file.exists()
+                Log.v("TAG", "existe:$fileExists");
                 if (batteryLevel != -1) {
                     result.success(batteryLevel)
                 } else {

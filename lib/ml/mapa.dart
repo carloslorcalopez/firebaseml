@@ -16,8 +16,6 @@ class MapaPage extends StatefulWidget {
 
 class _MapaPageState extends State<MapaPage> {
   MapType _defaultMapType = MapType.normal;
-  Completer<GoogleMapController> _controller = Completer();
-  var currentLocation = LocationData;
   final Landmark landmark;
   _MapaPageState(this.landmark);
 
@@ -45,7 +43,10 @@ class _MapaPageState extends State<MapaPage> {
       body: Stack(children: <Widget>[
         GoogleMap(
           mapType: _defaultMapType,
-          myLocationEnabled: true,
+          buildingsEnabled: true,
+          mapToolbarEnabled: true,
+          myLocationEnabled: false,
+          compassEnabled: true,
           initialCameraPosition: CameraPosition(
               target: LatLng(this.landmark.latitude, this.landmark.longitude),
               zoom: 15),

@@ -28,7 +28,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
     debugPrint("Path: " + imageFile.path);
     setState(() {
       isLoading = true;
-      _landmarks = new List();
+      _imageFile = null;
     });
     final image = FirebaseVisionImage.fromFile(imageFile);
     final faceDetector = FirebaseVision.instance.faceDetector();
@@ -111,7 +111,7 @@ class _LandmarkPageState extends State<LandmarkPage> {
                   height: 30,
                   child: FlatButton(
                     onPressed: () {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(
                               builder: (context) => MapaPage(
